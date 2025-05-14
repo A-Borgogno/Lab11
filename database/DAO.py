@@ -70,7 +70,7 @@ class DAO():
                     from go_daily_sales gds, go_daily_sales gds2 
                     where year(gds.Date) = %s
                     and gds.Product_number = %s and gds2.Product_number = %s
-                    and gds.Retailer_code = gds2.Retailer_code and gds.Order_method_code = gds2.Order_method_code
+                    and gds.Retailer_code = gds2.Retailer_code
                     and gds.`Date` = gds2.`Date` """
 
         cursor.execute(query, (year, u, v))

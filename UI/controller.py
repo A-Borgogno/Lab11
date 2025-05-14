@@ -1,5 +1,3 @@
-from operator import indexOf
-
 import flet as ft
 
 
@@ -24,8 +22,8 @@ class Controller:
 
 
     def handle_graph(self, e):
-
         self._view.txtOut.controls.clear()
+        self._view._ddnode.options.clear()
         color = self._view._ddcolor.value
         year = self._view._ddyear.value
         if year == None:
@@ -41,7 +39,7 @@ class Controller:
         grafo = self._model.buildGraph(color, year)
         self._view.txtOut.controls.clear()
         self._view.txtOut.controls.append(ft.Text(f"Grafo creato correttamente", weight=ft.FontWeight.BOLD))
-        self._view.txtOut.controls.append(ft.Text(f"Numero vertici: {grafo.number_of_nodes()} Numero archi: {grafo.number_of_edges()}"))
+        self._view.txtOut.controls.append(ft.Text(f"Numero vertici: {grafo.number_of_nodes()} Numero archi: {len(grafo.edges())}"))
         archiPesoMaggiore = []
         i = 0
         for edge in grafo.edges(data=True):
@@ -68,8 +66,11 @@ class Controller:
 
 
     def handle_search(self, e):
+        self._view.txtOut2.controls.clear()
         nodo = self._view._ddnode.value
-        path, len = self._model.searchPath(nodo)
+        path_lenght = self._model.searchPath(nodo)
+        self._view.txtOut2.controls.append(ft.Text(f"Numero archi percorso più lungo : {path_lenght}"))
+        self._view.update_page()
 
 
     def _aggiungiArco(self, listaArchiPesoMaggiore, edge):
