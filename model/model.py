@@ -21,13 +21,16 @@ class Model:
         for node in nodes:
             self._idMap[node.Product_number] = node
         self._graph.add_nodes_from(nodes)
-        print(self._graph.nodes)
+        # print(self._graph.nodes)
         print(self._graph.number_of_nodes())
         self.addEdges(year)
+        return self._graph
 
     def addEdges(self, year):
         for node in self._graph.nodes:
-            for s in self._graph.neighbors(node):
-                if DAO.verificaNodi(year, node.Product_number, s.Product_number):
-                    self._graph.add_edge(node, s, weight="")
+            for s in self._graph.nodes:
+                if node.Product_number < s.Product_number:
+                    res = DAO.verificaNodi(year, node.Product_number, s.Product_number)
+                    if res:
+                        self._graph.add_edge(node, s, weight=res[0])
 

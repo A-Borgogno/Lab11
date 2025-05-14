@@ -22,10 +22,16 @@ class Controller:
 
 
     def handle_graph(self, e):
+        self._view.txtOut.controls.clear()
+        self._view.txtOut.controls.append(ft.Text("Crezione grafo in corso", weight=ft.FontWeight.BOLD))
+        self._view.update_page()
         color = self._view._ddcolor.value
         year = self._view._ddyear.value
-        self._model.buildGraph(color, year)
-        pass
+        grafo = self._model.buildGraph(color, year)
+        self._view.txtOut.controls.clear()
+        self._view.txtOut.controls.append(ft.Text(f"Grafo creato correttamente", weight=ft.FontWeight.BOLD))
+        self._view.txtOut.controls.append(ft.Text(f"Numero vertici: {grafo.number_of_nodes()} Numero archi: {grafo.number_of_edges()}"))
+        self._view.update_page()
 
 
 

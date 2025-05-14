@@ -68,17 +68,21 @@ class DAO():
 
         query = """select count(distinct(gds.Date)) as tot
                     from go_daily_sales gds, go_daily_sales gds2 
-                    where year(gds.Date) = 2015
-                    and gds.Product_number = 1110 and gds2.Product_number = 24110
-                    and gds.Retailer_code = gds2.Retailer_code and gds.Order_method_code = gds2.Order_method_code """
+                    where year(gds.Date) = %s
+                    and gds.Product_number = %s and gds2.Product_number = %s
+                    and gds.Retailer_code = gds2.Retailer_code and gds.Order_method_code = gds2.Order_method_code
+                    and gds.`Date` = gds2.`Date` """
 
         cursor.execute(query, (year, u, v))
+
 
         for row in cursor:
             res.append((row["tot"]))
 
         cursor.close()
         conn.close()
+        if res is None or res[0] == 0:
+            return False
         return res
 
 
