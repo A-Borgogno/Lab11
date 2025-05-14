@@ -34,3 +34,16 @@ class Model:
                     if res:
                         self._graph.add_edge(node, s, weight=res[0])
 
+
+    def searchPath(self, nodo):
+        self._ricorsione(nodo, [], self._graph)
+
+
+    def _ricorsione(self, source, precedenti, graph: nx.Graph):
+        for n in nx.neighbors(graph, source):
+            if n not in precedenti:
+                peso = graph.get_edge_data(source, n)['weight']
+                if peso >= graph.get_edge_data(precedenti[-1], source)['weight']:
+                    precedenti.append(n)
+        return precedenti
+
