@@ -41,37 +41,47 @@ class Model:
                     if res:
                         self._graph.add_edge(node, s, weight=res[0])
 
-
     def searchPath(self, nodo):
-        analizzati = 0
+        analizzati = []
         nodoSorgente = self._idMap[int(nodo)]
         self._numSuccessori = len(list(nx.descendants(self._graph, nodoSorgente)))
         print(self._numSuccessori)
-        self._ricorsione(nodoSorgente, [nodoSorgente], analizzati, self._nodes)
+        nodi_rimanenti = copy.deepcopy(self._nodes)
+        nodi_rimanenti.remove(nodoSorgente)
+        self._ricorsione(nodoSorgente, [nodoSorgente], analizzati, nodi_rimanenti)
         return len(self._best)
 
-
     def _ricorsione(self, source, precedenti, analizzati, nodi_rimanenti):
-        if len(nodi_rimanenti)==1:       # condizione terminale
-            print(analizzati)
-            if len(precedenti)>len(self._best):
+        if not nodi_rimanenti or self._viciniAnalizzati(nx.neighbors(self._graph, source), analizzati):
+            if len(precedenti) > len(self._best):
                 self._best = copy.deepcopy(precedenti)
-                return
-        else:
-            for n in list(nx.neighbors(self._graph, source))[1:]:
-                analizzati += 1
-                if n not in precedenti:
-                    peso = self._graph.get_edge_data(source, n)['weight']
-                    if len(precedenti) > 1:
-                        if peso >= self._graph.get_edge_data(precedenti[-2], source)['weight']:
-                            precedenti.append(n)
-                            nuovaLista = copy.deepcopy(nodi_rimanenti)
-                            nuovaLista.remove(n)
-                            self._ricorsione(n, precedenti, analizzati, nuovaLista)
-                            precedenti.pop()
-                    else:
-                        precedenti.append(n)
+            return
+
+        for n in list(nx.neighbors(self._graph, source)):
+            if n not in analizzati:
+                analizzati.append(n)
+
+            if n not in precedenti:
+                peso = self._graph.get_edge_data(source, n)['weight']
+                if len(precedenti) > 1:
+                    peso_prev = self._graph.get_edge_data(precedenti[-2], source)['weight']
+                if len(precedenti) > 1:
+                    peso_prev = self._graph.get_edge_data(precedenti[-2], source)['weight']
+                    if peso >= peso_prev:
                         nuovaLista = copy.deepcopy(nodi_rimanenti)
+                        if n in nuovaLista:
+                            nuovaLista.remove(n)
+                        self._ricorsione(n, copy.deepcopy(precedenti + [n]), copy.deepcopy(analizzati), nuovaLista)
+                else:
+                    nuovaLista = copy.deepcopy(nodi_rimanenti)
+                    if n in nuovaLista:
                         nuovaLista.remove(n)
-                        self._ricorsione(n, precedenti, analizzati, nuovaLista)
-                        precedenti.pop()
+                    self._ricorsione(n, copy.deepcopy(precedenti + [n]), copy.deepcopy(analizzati), nuovaLista)
+
+
+    def _viciniAnalizzati(self, vicini, listaNodiAnalizzati):
+        for vicino in list(vicini):
+            if vicino not in listaNodiAnalizzati:
+                return False
+        return True
+
