@@ -52,7 +52,7 @@ class Model:
 
 
     def _ricorsione(self, source, precedenti, analizzati, nodi_rimanenti):
-        if len(nodi_rimanenti)==0:       # condizione terminale
+        if len(nodi_rimanenti)==1:       # condizione terminale
             print(analizzati)
             if len(precedenti)>len(self._best):
                 self._best = copy.deepcopy(precedenti)
@@ -65,9 +65,13 @@ class Model:
                     if len(precedenti) > 1:
                         if peso >= self._graph.get_edge_data(precedenti[-2], source)['weight']:
                             precedenti.append(n)
-                            self._ricorsione(n, precedenti, analizzati, nodi_rimanenti.remove(n))
+                            nuovaLista = copy.deepcopy(nodi_rimanenti)
+                            nuovaLista.remove(n)
+                            self._ricorsione(n, precedenti, analizzati, nuovaLista)
                             precedenti.pop()
                     else:
                         precedenti.append(n)
-                        self._ricorsione(n, precedenti, analizzati, nodi_rimanenti.remove(n))
+                        nuovaLista = copy.deepcopy(nodi_rimanenti)
+                        nuovaLista.remove(n)
+                        self._ricorsione(n, precedenti, analizzati, nuovaLista)
                         precedenti.pop()
